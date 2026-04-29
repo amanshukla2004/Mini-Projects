@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Interactive Background</title>
+    <style>
+        /* 1. MODERN DARK THEME */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #080808;
+            overflow: hidden; /* Prevents scrollbars */
+            height: 100vh;
+            width: 100vw;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: none; /* Hide real cursor for a custom feel */
+        }
+
+        /* 2. OPTIMIZED SHAPE STYLING */
+        .shape {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none; /* Mouse passes through them (no flicker) */
+            will-change: transform; /* Tells GPU to prepare for movement */
+            opacity: 0.7;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        #ui-layer {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: white;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        h1 { font-size: 3rem; letter-spacing: 5px; text-transform: uppercase; }
+
+        #cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transition: transform 0.05s linear, border-color 0.2s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="ui-layer">
+        <h1>Modern Flux</h1>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        const container = document.querySelector("#canvas-container");
+        const cursor = document.querySelector("#cursor");
+        const shapes = [];
+        const shapeCount = 50; // Adjust this to 300+ for more chaos!
+        
+        // Target coordinates (where the mouse is)
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        // 1. TRACK MOUSE MOVEMENT
+        window.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Custom cursor effect
+            cursor.style.transform = `translate3d(${mouseX - 10}px, ${mouseY - 10}px, 0)`;
+        });
+
+        // 1.5 SCATTER ON CLICK
+        window.addEventListener("mousedown", () => {
+            shapes.forEach(shape => {
+                const dx = shape.x - mouseX;
+                const dy = shape.y - mouseY;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                
+                // Push particles away
+                shape.x += (dx / dist) * 300;
+                shape.y += (dy / dist) * 300;
+            });
+        });
+
+        // 2. DYNAMICALLY GENERATE SHAPES
+        function createShapes() {
+            for (let i = 0; i < shapeCount; i++) {
+                const el = document.createElement("div");
+                el.className = "shape";
+                
+                // Randomize sizes (5px to 50px)
+                const size = Math.random() * 50 + 5;
+                el.style.width = `${size}px`;
+                el.style.height = `${size}px`;
+
+                // Randomize colors using HSL (Rainbow spectrum)
+                const hue = Math.random() * 360;
+                el.style.backgroundColor = `hsl(${hue}, 80%, 60%)`;
+
+                // Randomize shapes (Squares, Circles, Rounded Squares)
+                const borderRadius = [0, "50%", "10px"][Math.floor(Math.random() * 3)];
+                el.style.borderRadius = borderRadius;
+
+                container.appendChild(el);
+
+                // Store object with its unique "Friction" (Speed)
+                shapes.push({
+                    el: el,
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    // Different friction creates the "trailing/lagging" effect
+                    friction: Math.random() * 0.09 + 0.001 
+                });
+            }
+        }
+
+        // 3. THE ANIMATION ENGINE (LERP)
+        // Formula: CurrentPos = CurrentPos + (Target - CurrentPos) * Friction
+        function update() {
+            shapes.forEach(shape => {
+                // Calculate distance to move
+                const dx = mouseX - shape.x;
+                const dy = mouseY - shape.y;
+
+                // Update position
+                shape.x += dx * shape.friction;
+                shape.y += dy * shape.friction;
+
+                // Apply movement via GPU-accelerated Transform
+                // translate3d(x, y, z) is faster than top/left
+                shape.el.style.transform = `translate3d(${shape.x}px, ${shape.y}px, 0)`;
+            });
+
+            // Keep the loop running
+            requestAnimationFrame(update);
+        }
+
+        // Initialize
+        createShapes();
+        update();
+
+        // Handle window resizing
+        window.addEventListener("resize", () => {
+            // Optional: Recenter or reset logic
+        });
+    </script>
+</body>
+</html>

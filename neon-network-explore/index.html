@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Interactive Experience</title>
+    <style>
+        /* --- MODERN PREMIUM STYLING --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #030305; /* Deep rich black/blue */
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            cursor: none; /* Hide cursor for custom pointer */
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Center content that ignores mouse events so the canvas gets them */
+        #hero-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+            color: white;
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin: 0;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #818cf8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hero-text">
+        <h1>Explore.</h1>
+        <p>Interact with the network</p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        
+        // --- 1. OPTIMIZED SETTINGS ---
+        const PARTICLE_COUNT = 300; 
+        // We use squared distance to avoid expensive Math.sqrt() calculations
+        const CONNECT_DIST = 200;
+        const CONNECT_DIST_SQ = CONNECT_DIST * CONNECT_DIST; 
+        const MOUSE_PULL_DIST = 150;
+        const MOUSE_PULL_DIST_SQ = MOUSE_PULL_DIST * MOUSE_PULL_DIST;
+
+        const particles = [];
+
+        const mouse = {
+            x: -1000, 
+            y: -1000,
+            vx: 0,
+            vy: 0,
+            radius: 40,
+            isClicked: true
+        };
+
+        // --- 2. RESIZE HANDLER ---
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- 3. EVENT LISTENERS ---
+        let lastMouse = { x: -1000, y: -1000 };
+        window.addEventListener('mousemove', (e) => {
+            lastMouse.x = mouse.x;
+            lastMouse.y = mouse.y;
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            
+            // Calculate mouse velocity for the "Swipe/Wake" effect
+            mouse.vx = mouse.x - lastMouse.x;
+            mouse.vy = mouse.y - lastMouse.y;
+        });
+
+        window.addEventListener('mousedown', () => mouse.isClicked = true);
+        window.addEventListener('mouseup', () => mouse.isClicked = false);
+        window.addEventListener('mouseleave', () => {
+            mouse.x = -1000;
+            mouse.y = -1000;
+        });
+
+        // --- 4. PARTICLE CLASS ---
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.5; // Base drift speed
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.baseSize = Math.random() * 3 + 5;
+                
+                // Color palette: Cyan, Indigo, and Violet
+                const colors = ['#00f2fe', '#6366f1', '#a855f7'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                // 1. Mouse Interaction (The "Explore" factor)
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distSq = dx * dx + dy * dy;
+
+                if (distSq < MOUSE_PULL_DIST_SQ) {
+                    const dist = Math.sqrt(distSq);
+                    const force = (MOUSE_PULL_DIST - dist) / MOUSE_PULL_DIST;
+
+                    if (mouse.isClicked) {
+                        // Click = Black Hole (Suck in and swirl)
+                        this.vx += (dx / dist) * force * 5;
+                        this.vy += (dy / dist) * force * 5;
+                        // Orbital force
+                        this.vx -= (dy / dist) * force * 1.5;
+                        this.vy += (dx / dist) * force * 1.5;
+                    } else {
+                        // Hover = Repel gently to create space + add mouse momentum
+                        this.vx -= (dx / dist) * force * 0.2;
+                        this.vy -= (dy / dist) * force * 0.2;
+                        
+                        // Fluid wake (transfer mouse speed to particle)
+                        this.vx += mouse.vx * force * 0.02;
+                        this.vy += mouse.vy * force * 0.02;
+                    }
+                }
+
+                // 2. Apply Velocity and Friction
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Friction limits max speed
+                this.vx *= 0.96; 
+                this.vy *= 0.96;
+
+                // 3. Keep moving slowly even when mouse is gone
+                if (Math.abs(this.vx) < 0.2) this.vx += (Math.random() - 0.5) * 0.1;
+                if (Math.abs(this.vy) < 0.2) this.vy += (Math.random() - 0.5) * 0.1;
+
+                // 4. Wrap around screen edges smoothly
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.baseSize, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push(new Particle());
+        }
+
+        // --- 5. THE ANIMATION ENGINE ---
+        function animate() {
+            // 1. Draw Background (Source-Over removes previous frames)
+            // Using rgba allows for a slight motion blur trail
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(3, 3, 5, 0.4)';
+            ctx.fillRect(0, 0, width, height);
+
+            // 2. Additive Blending for the "Glowing Neon" effect!
+            // This is GPU accelerated and costs zero CPU performance.
+            ctx.globalCompositeOperation = 'lighter';
+
+            // 3. Update & Draw everything
+            for (let i = 0; i < particles.length; i++) {
+                const p1 = particles[i];
+                p1.update();
+                p1.draw();
+
+                // Draw Network Connections
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distSq = dx * dx + dy * dy;
+
+                    // Only draw if close enough
+                    if (distSq < CONNECT_DIST_SQ) {
+                        // Calculate opacity based on distance
+                        const opacity = 1 - (Math.sqrt(distSq) / CONNECT_DIST);
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        // Network color mixes with background
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${opacity * 0.7})`;
+                        ctx.lineWidth = opacity * 1.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // 4. Draw the User's Custom Cursor (The Explorer Ring)
+            if (mouse.x !== -1000) {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.beginPath();
+                ctx.arc(mouse.x, mouse.y, mouse.isClicked ? 15 : 25, 0, Math.PI * 2);
+                ctx.strokeStyle = mouse.isClicked ? '#00f2fe' : 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Center dot
+                ctx.beginPath();
+                ctx.arc(mouse.x, mouse.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Start!
+        animate();
+    </script>
+</body>
+</html>

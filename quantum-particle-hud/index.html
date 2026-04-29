@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Interactive Swarm</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #080808;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: none; /* Hides default cursor */
+            user-select: none; 
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 4rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin: 0;
+            font-weight: 300;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        
+        p {
+            letter-spacing: 2px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        .highlight { color: #00f2fe; }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <h1>Flux Web</h1>
+        <p>Swipe fast for <span class="highlight">Fluid Wake</span>.<br>Click to fire <span class="highlight">Energy Pulse</span>.<br>Hold & Release for <span class="highlight">Supernova</span>.</p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // --- 1. STATE & SETTINGS ---
+        const particles = [];
+        const shockwaves = []; 
+        const PARTICLE_COUNT = 60; 
+        const CONNECT_DISTANCE = 150; 
+
+        // UPGRADED Pointer Object
+        const pointer = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            prevX: canvas.width / 2,
+            prevY: canvas.height / 2,
+            vx: 0,
+            vy: 0,
+            speed: 0,
+            isDown: false,
+            charge: 0,
+            angle: 0, // For rotating the HUD rings
+            history: [] // Stores previous positions for the Plasma Ribbon trail
+        };
+
+        // --- 2. EVENT LISTENERS ---
+        window.addEventListener('pointermove', (e) => {
+            pointer.prevX = pointer.x;
+            pointer.prevY = pointer.y;
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+
+            pointer.vx = pointer.x - pointer.prevX;
+            pointer.vy = pointer.y - pointer.prevY;
+            pointer.speed = Math.sqrt(pointer.vx**2 + pointer.vy**2);
+
+            // FLUID WAKE
+            if (pointer.speed > 15 && !pointer.isDown) {
+                particles.forEach(p => {
+                    const dx = p.x - pointer.x;
+                    const dy = p.y - pointer.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy) + 1;
+                    
+                    if (dist < 300) {
+                        p.vx += (pointer.vx / dist) * 10;
+                        p.vy += (pointer.vy / dist) * 10;
+                    }
+                });
+            }
+        });
+
+        window.addEventListener('pointerdown', () => {
+            pointer.isDown = true;
+            pointer.charge = 0;
+
+            // ENERGY PULSE SHOCKWAVE
+            shockwaves.push({
+                x: pointer.x,
+                y: pointer.y,
+                radius: 1,
+                maxRadius: Math.max(canvas.width/3, canvas.height/3),
+                speed: 10
+            });
+        });
+
+        window.addEventListener('pointerup', () => {
+            pointer.isDown = false;
+            
+            // SUPERNOVA BLAST
+            if (pointer.charge > 1) {
+                particles.forEach(p => {
+                    const dx = p.x - pointer.x;
+                    const dy = p.y - pointer.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy) + 1;
+                    
+                    p.vx += (dx / dist) * pointer.charge * 20;
+                    p.vy += (dy / dist) * pointer.charge * 20;
+                });
+            }
+            pointer.charge = 0;
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // --- 3. PARTICLE BLUEPRINT ---
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = 0;
+                this.vy = 0; 
+                this.size = Math.random() * 12 + 2; 
+                this.baseColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+                this.shapeType = Math.floor(Math.random() * 3); 
+                this.friction = Math.random() * 0.05 + 0.01; 
+                this.angle = Math.random() * Math.PI * 2;
+                this.wanderSpeed = Math.random() * 0.05 + 0.01;
+                this.isShocked = false; 
+                this.distanceToPointer = 9999; // Track distance for tethers
+            }
+
+            update() {
+                let targetX = pointer.x;
+                let targetY = pointer.y;
+                let currentFriction = this.friction;
+
+                const dx = this.x - pointer.x;
+                const dy = this.y - pointer.y;
+                this.distanceToPointer = Math.sqrt(dx*dx + dy*dy);
+
+                // BLACK HOLE MECHANIC
+                if (pointer.isDown) {
+                    pointer.charge = Math.min(pointer.charge + 0.05, 5); 
+                    currentFriction = 0.2; 
+
+                    this.vx -= (dy / (this.distanceToPointer + 1)) * pointer.charge * 0.5;
+                    this.vy += (dx / (this.distanceToPointer + 1)) * pointer.charge * 0.5;
+                } else {
+                    this.angle += this.wanderSpeed;
+                    this.x += Math.cos(this.angle) * 12;
+                    this.y += Math.sin(this.angle) * 12;
+                }
+
+                this.x += (targetX - this.x) * currentFriction;
+                this.y += (targetY - this.y) * currentFriction;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                this.vx *= 0.85;
+                this.vy *= 0.85;
+            }
+
+            draw() {
+                ctx.fillStyle = this.isShocked ? '#ffffff' : this.baseColor;
+                ctx.beginPath();
+
+                if (this.shapeType === 0) {
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                } else if (this.shapeType === 1) {
+                    ctx.rect(this.x - this.size, this.y - this.size, this.size * 2, this.size * 2);
+                } else {
+                    ctx.moveTo(this.x, this.y - this.size);
+                    ctx.lineTo(this.x + this.size, this.y + this.size);
+                    ctx.lineTo(this.x - this.size, this.y + this.size);
+                }
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push(new Particle());
+        }
+
+        // --- 4. ANIMATION LOOP ---
+        function animate() {
+            ctx.fillStyle = 'rgba(8, 8, 8, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update Shockwaves
+            for (let i = shockwaves.length - 1; i >= 0; i--) {
+                let sw = shockwaves[i];
+                sw.radius += sw.speed;
+
+                ctx.beginPath();
+                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(0, 242, 254, ${1 - (sw.radius / sw.maxRadius)})`;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                if (sw.radius > sw.maxRadius) shockwaves.splice(i, 1);
+            }
+
+            // Update and Draw Particles
+            for (let i = 0; i < particles.length; i++) {
+                let p1 = particles[i];
+                p1.isShocked = false;
+
+                shockwaves.forEach(sw => {
+                    const distToRing = Math.hypot(p1.x - sw.x, p1.y - sw.y);
+                    if (Math.abs(distToRing - sw.radius) < 20) p1.isShocked = true;
+                });
+
+                p1.update();
+                p1.draw();
+
+                // Draw Particle Connections
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < CONNECT_DISTANCE) {
+                        let opacity = 1 - (distance / CONNECT_DISTANCE);
+                        if (p1.isShocked || p2.isShocked) {
+                            ctx.strokeStyle = `rgba(0, 242, 254, ${opacity})`;
+                            ctx.lineWidth = 2; 
+                        } else {
+                            ctx.strokeStyle = `rgba(250, 250, 250, ${opacity * 0.15})`;
+                            ctx.lineWidth = 1;
+                        }
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // ==========================================
+            // --- 5. THE ULTIMATE POINTER MECHANICS ---
+            // ==========================================
+
+            // A. Update Pointer History for Plasma Trail
+            pointer.history.unshift({ x: pointer.x, y: pointer.y });
+            if (pointer.history.length > 20) pointer.history.pop();
+
+            // Draw Plasma Trail
+            if (pointer.history.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(pointer.history[0].x, pointer.history[0].y);
+                for (let i = 1; i < pointer.history.length; i++) {
+                    ctx.lineTo(pointer.history[i].x, pointer.history[i].y);
+                }
+                ctx.strokeStyle = 'rgba(0, 242, 254, 0.5)';
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#00f2fe';
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            // B. Draw Quantum Tethers (Connect to 5 closest particles)
+            // Sort particles by distance to pointer
+            const closestParticles = [...particles].sort((a, b) => a.distanceToPointer - b.distanceToPointer).slice(0, 5);
+            closestParticles.forEach((p, index) => {
+                if (p.distanceToPointer < 1000) { // Only tether if close enough
+                    ctx.beginPath();
+                    ctx.moveTo(pointer.x, pointer.y);
+                    ctx.lineTo(p.x, p.y);
+                    // The closer the particle, the brighter the tether
+                    const alpha = 1 - (p.distanceToPointer / 300);
+                    ctx.strokeStyle = pointer.isDown ? `rgba(255, 0, 100, ${alpha})` : `rgba(0, 242, 254, ${alpha})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+
+            // C. Draw HUD Reticle (The actual cursor)
+            pointer.angle += pointer.isDown ? 0.2 : 0.05; // Spins faster when holding click
+            const ringRadius = pointer.isDown ? 15 : 25 + pointer.speed * 0.2; // Expands with speed, shrinks on click
+
+            ctx.save();
+            ctx.translate(pointer.x, pointer.y);
+            ctx.rotate(pointer.angle);
+
+            // Inner solid core
+            ctx.beginPath();
+            ctx.arc(0, 0, pointer.isDown ? 8 : 4, 0, Math.PI * 2);
+            ctx.fillStyle = pointer.isDown ? '#ff0066' : '#ffffff';
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = pointer.isDown ? '#ff0066' : '#00f2fe';
+            ctx.fill();
+
+            // Outer Rotating HUD Ring (Broken Circle)
+            ctx.beginPath();
+            ctx.arc(0, 0, ringRadius, 0, Math.PI * 1.5); // 3/4 of a circle
+            ctx.strokeStyle = pointer.isDown ? '#ff0066' : '#00f2fe';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Opposite Inner Ring
+            ctx.beginPath();
+            ctx.arc(0, 0, ringRadius - 8, Math.PI, Math.PI * 2.5);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.restore();
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

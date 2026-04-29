@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum System Update</title>
+    <style>
+        :root {
+            --cyan: #00f2fe;
+            --blue: #4facfe;
+            --bg: #020617;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .update-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            padding: 3rem;
+            border-radius: 2rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h2 { font-weight: 800; letter-spacing: -0.05em; margin-bottom: 2rem; background: linear-gradient(to right, var(--cyan), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .progress-track {
+            background: rgba(255,255,255,0.05);
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(to right, var(--cyan), var(--blue));
+            box-shadow: 0 0 15px var(--cyan);
+            transition: width 0.1s linear;
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            margin-bottom: 2rem;
+        }
+
+        #startBtn {
+            background: transparent;
+            color: white;
+            border: 1px solid var(--cyan);
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+
+        #startBtn:hover { background: var(--cyan); color: black; box-shadow: 0 0 20px var(--cyan); }
+    </style>
+</head>
+<body>
+
+    <div class="update-box">
+        <h2>Quantum_OS Update</h2>
+        <div class="progress-track">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="meta">
+            <span id="pct">0% COMPLETE</span>
+            <span id="status">IDLE</span>
+        </div>
+        <button id="startBtn">Initiate Update</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('startBtn');
+        const fill = document.getElementById('progress-fill');
+        const pct = document.getElementById('pct');
+        const status = document.getElementById('status');
+
+        btn.addEventListener('click', () => {
+            btn.style.display = 'none';
+            status.innerText = 'DOWNLOADING_PACKAGES...';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                // Random speed for realism
+                progress += Math.random() * 2;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    status.innerText = 'SYSTEM_READY';
+                    pct.innerText = '100% COMPLETE';
+                    setTimeout(() => {
+                        alert('System Updated Successfully.');
+                        location.reload();
+                    }, 1000);
+                }
+                fill.style.width = `${progress}%`;
+                pct.innerText = `${Math.floor(progress)}% COMPLETE`;
+                
+                if (progress > 40 && progress < 70) status.innerText = 'PATCHING_KERNEL...';
+                if (progress > 70) status.innerText = 'FINALIZING...';
+            }, 50);
+        });
+    </script>
+</body>
+</html>

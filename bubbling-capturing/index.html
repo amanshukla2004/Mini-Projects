@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubbling vs Capturing</title>
+    <style>
+        :root {
+            --blue: #3b82f6;
+            --red: #ef4444;
+            --green: #10b981;
+            --bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .box {
+            padding: 40px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .box:hover { border-color: white; }
+
+        .grandparent { background: rgba(59, 130, 246, 0.1); width: 400px; height: 400px; }
+        .parent { background: rgba(239, 68, 68, 0.1); width: 300px; height: 300px; }
+        .child { background: rgba(16, 185, 129, 0.1); width: 200px; height: 200px; }
+
+        .active { 
+            transform: scale(1.05);
+            box-shadow: 0 0 30px currentColor;
+            border-color: currentColor !important;
+        }
+
+        .controls { margin-bottom: 2rem; display: flex; gap: 1rem; }
+
+        button {
+            padding: 10px 20px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #log {
+            margin-top: 2rem;
+            font-family: monospace;
+            height: 100px;
+            overflow-y: auto;
+            width: 400px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <p>Phase: <span id="phase-text" style="color: var(--blue)">Bubbling (Default)</span></p>
+    </div>
+
+    <div class="grandparent box" id="gp">
+        GP
+        <div class="parent box" id="p">
+            P
+            <div class="child box" id="c">
+                C
+            </div>
+        </div>
+    </div>
+
+    <div id="log"></div>
+
+    <script>
+        const gp = document.getElementById('gp');
+        const p = document.getElementById('p');
+        const c = document.getElementById('c');
+        const log = document.getElementById('log');
+
+        function addLog(name, color) {
+            const entry = document.createElement('div');
+            entry.style.color = color;
+            entry.innerText = `> Event hit: ${name}`;
+            log.prepend(entry);
+        }
+
+        function flash(el, color) {
+            el.style.color = color;
+            el.classList.add('active');
+            setTimeout(() => {
+                el.classList.remove('active');
+                el.style.color = 'white';
+            }, 500);
+        }
+
+        // Bubbling (default)
+        gp.addEventListener('click', () => { addLog('Grandparent', 'var(--blue)'); flash(gp, 'var(--blue)'); });
+        p.addEventListener('click', () => { addLog('Parent', 'var(--red)'); flash(p, 'var(--red)'); });
+        c.addEventListener('click', (e) => { 
+            addLog('Child', 'var(--green)'); 
+            flash(c, 'var(--green)'); 
+        });
+
+        // Tip: to show capturing, add { capture: true } as 3rd arg to addEventListener
+    </script>
+</body>
+</html>

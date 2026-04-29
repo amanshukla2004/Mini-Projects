@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Key Inspector</title>
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --bg: #050505;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-key {
+            font-size: 12rem;
+            font-weight: 700;
+            text-shadow: 0 0 50px rgba(0, 242, 254, 0.5);
+            margin: 0;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.8; transform: scale(1); }
+            to { opacity: 1; transform: scale(1.05); }
+        }
+
+        .details {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .box {
+            border: 1px solid var(--primary);
+            padding: 1rem 2rem;
+            text-align: center;
+            background: rgba(0, 242, 254, 0.05);
+            min-width: 150px;
+        }
+
+        .label { font-size: 0.8rem; color: #fff; opacity: 0.5; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .value { font-size: 1.5rem; font-weight: bold; }
+
+        .hint { margin-top: 4rem; opacity: 0.3; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <h1 id="main-key" class="main-key">?</h1>
+    
+    <div class="details">
+        <div class="box">
+            <div class="label">event.key</div>
+            <div id="key-name" class="value">-</div>
+        </div>
+        <div class="box">
+            <div class="label">event.keyCode</div>
+            <div id="key-code" class="value">-</div>
+        </div>
+        <div class="box">
+            <div class="label">event.code</div>
+            <div id="key-event-code" class="value">-</div>
+        </div>
+    </div>
+
+    <p class="hint">Press any key to inspect neural signal...</p>
+
+    <script>
+        window.addEventListener('keydown', (e) => {
+            const main = document.getElementById('main-key');
+            const name = document.getElementById('key-name');
+            const code = document.getElementById('key-code');
+            const eCode = document.getElementById('key-event-code');
+
+            main.innerText = e.key === ' ' ? 'Space' : e.key;
+            name.innerText = e.key === ' ' ? 'Space' : e.key;
+            code.innerText = e.keyCode;
+            eCode.innerText = e.code;
+
+            // Flash effect
+            main.style.animation = 'none';
+            void main.offsetWidth; // trigger reflow
+            main.style.animation = 'pulse 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        });
+    </script>
+</body>
+</html>

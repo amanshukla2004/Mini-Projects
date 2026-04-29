@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Interactive Swarm</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #080808;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: none; /* Hides cursor for immersion */
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            pointer-events: none; /* Lets mouse interact with canvas behind it */
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 4rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin: 0;
+            font-weight: 300;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        
+        p {
+            letter-spacing: 2px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <h1>Flux Web</h1>
+        <p>Move your cursor. Click to repel.</p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Make canvas full screen
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // 1. STATE & SETTINGS
+        const particles = [];
+        const PARTICLE_COUNT = 90; // Optimized for connection lines
+        const CONNECT_DISTANCE = 250; // How close shapes must be to draw a line
+
+        // Track the mouse/touch position
+        const pointer = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            isDown: false
+        };
+
+        // Universal pointer events (handles both Mouse and Touch)
+        window.addEventListener('pointermove', (e) => {
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+        });
+        window.addEventListener('pointerdown', () => pointer.isDown = true);
+        window.addEventListener('pointerup', () => pointer.isDown = false);
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // 2. PARTICLE BLUEPRINT
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 15 + 2; // Size between 2 and 17
+                this.color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+                
+                // 0 = Circle, 1 = Square, 2 = Triangle
+                this.shapeType = Math.floor(Math.random() * 3); 
+                
+                // Speed at which it chases the pointer (Lerp)
+                this.friction = Math.random() * 0.05 + 0.01; 
+                
+                // To create organic floating movement
+                this.angle = Math.random() * Math.PI * 2;
+                this.wanderSpeed = Math.random() * 0.05 + 0.001;
+            }
+
+            update() {
+                // LERP: Chase the pointer
+                let targetX = pointer.x;
+                let targetY = pointer.y;
+
+                // If user clicks, shapes scatter away!
+                if (pointer.isDown) {
+                    const dx = this.x - pointer.x;
+                    const dy = this.y - pointer.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 300) {
+                        targetX = this.x + (dx * 5);
+                        targetY = this.y + (dy * 5);
+                    }
+                }
+
+                // Smoothly move towards target
+                this.x += (targetX - this.x) * this.friction;
+                this.y += (targetY - this.y) * this.friction;
+
+                // Add slight organic "wandering" so they don't look robotic
+                this.angle += this.wanderSpeed;
+                this.x += Math.cos(this.angle) * 9; // * 2
+                this.y += Math.sin(this.angle) * 9;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+
+                if (this.shapeType === 0) {
+                    // Circle
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                } else if (this.shapeType === 1) {
+                    // Square
+                    ctx.rect(this.x - this.size, this.y - this.size, this.size * 2, this.size * 2);
+                } else {
+                    // Triangle
+                    ctx.moveTo(this.x, this.y - this.size);
+                    ctx.lineTo(this.x + this.size, this.y + this.size);
+                    ctx.lineTo(this.x - this.size, this.y + this.size);
+                }
+                
+                ctx.fill();
+            }
+        }
+
+        // 3. INITIALIZE
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push(new Particle());
+        }
+
+        // 4. THE ANIMATION LOOP
+        function animate() {
+            // MOTION BLUR TRICK: Instead of clearing the screen completely, 
+            // we paint a semi-transparent black rectangle over it.
+            ctx.fillStyle = 'rgba(8, 8, 8, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update and Draw all particles
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                // 5. DRAW CONNECTIONS (The Web)
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy + 1);
+
+                    // If shapes are close to each other, draw a connecting line
+                    if (distance < CONNECT_DISTANCE) {
+                        // Line fades out the further away they are
+                        const opacity = 1 - (distance / CONNECT_DISTANCE);
+                        const hue = (Date.now() / 50) % 360;
+                        ctx.strokeStyle = `hsla(${hue}, 80%, 60%, ${opacity * 0.3})`;
+                        ctx.lineWidth = 1;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw a subtle glow exactly where the cursor is
+            ctx.beginPath();
+            ctx.arc(pointer.x, pointer.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.shadowBlur = 200;
+            ctx.shadowColor = 'white';
+            ctx.fill();
+            ctx.shadowBlur = 0; // Reset shadow so it doesn't affect everything else
+
+            requestAnimationFrame(animate);
+        }
+
+        // Start engine
+        animate();
+    </script>
+</body>
+</html>

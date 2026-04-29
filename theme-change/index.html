@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Theme Sync</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --accent: #3b82f6;
+            --card: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        body.dark {
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --accent: #8b5cf6;
+            --card: #1e293b;
+            --border: #334155;
+        }
+
+        body.matrix {
+            --bg: #000;
+            --text: #00ff41;
+            --accent: #008f11;
+            --card: #050505;
+            --border: #003b00;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controls {
+            position: fixed;
+            top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 2px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        button:hover { transform: translateY(-2px); border-color: var(--accent); }
+
+        .content {
+            background: var(--card);
+            padding: 3rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 { margin: 0 0 1rem 0; color: var(--accent); }
+        p { opacity: 0.8; line-height: 1.6; }
+
+        .status { margin-top: 2rem; font-size: 0.8rem; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button onclick="setTheme('light')">Light_Mode</button>
+        <button onclick="setTheme('dark')">Dark_Mode</button>
+        <button onclick="setTheme('matrix')">Neural_Net</button>
+    </div>
+
+    <div class="content">
+        <h1>Theme Synchronizer</h1>
+        <p>This module demonstrates persistent state management using <b>localStorage</b>. Your selection is cached and restored upon system reboot.</p>
+        <div class="status">CACHED_THEME: <span id="current-theme">LIGHT</span></div>
+    </div>
+
+    <script>
+        function setTheme(theme) {
+            document.body.className = theme;
+            localStorage.setItem('cached-theme', theme);
+            document.getElementById('current-theme').innerText = theme.toUpperCase();
+        }
+
+        // Initialize from storage
+        const saved = localStorage.getItem('cached-theme') || 'light';
+        setTheme(saved);
+    </script>
+</body>
+</html>

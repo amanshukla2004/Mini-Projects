@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Cursor Tracker</title>
+    <style>
+        :root {
+            --red: #ff0055;
+            --blue: #00f2fe;
+            --bg: #030305;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Fira Code', monospace;
+            color: rgba(255,255,255,0.2);
+            cursor: none;
+        }
+
+        .follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 100;
+        }
+
+        #cursor-core {
+            width: 8px;
+            height: 8px;
+            background: white;
+            box-shadow: 0 0 15px white, 0 0 30px var(--blue);
+            transition: transform 0.1s ease;
+        }
+
+        #cursor-ring {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--blue);
+            transition: transform 0.15s ease-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #cursor-trail {
+            width: 60px;
+            height: 60px;
+            border: 1px dashed var(--red);
+            opacity: 0.3;
+            transition: transform 0.3s ease-out;
+        }
+
+        .coords {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor-core" class="follower"></div>
+    <div id="cursor-ring" class="follower"></div>
+    <div id="cursor-trail" class="follower"></div>
+
+    <div class="coords">X: <span id="x-val">0</span> | Y: <span id="y-val">0</span></div>
+
+    <p>Move your cursor to track neural signals...</p>
+
+    <script>
+        const core = document.getElementById('cursor-core');
+        const ring = document.getElementById('cursor-ring');
+        const trail = document.getElementById('cursor-trail');
+        const xVal = document.getElementById('x-val');
+        const yVal = document.getElementById('y-val');
+
+        window.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            xVal.innerText = x;
+            yVal.innerText = y;
+
+            // Update positions with different offsets for center alignment
+            core.style.transform = `translate(${x - 4}px, ${y - 4}px)`;
+            ring.style.transform = `translate(${x - 20}px, ${y - 20}px)`;
+            trail.style.transform = `translate(${x - 30}px, ${y - 30}px)`;
+        });
+
+        window.addEventListener('mousedown', () => {
+            ring.style.transform += ' scale(0.5)';
+            ring.style.borderColor = 'var(--red)';
+        });
+
+        window.addEventListener('mouseup', () => {
+            ring.style.borderColor = 'var(--blue)';
+        });
+    </script>
+</body>
+</html>

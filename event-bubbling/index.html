@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Bubbling Visualizer</title>
+    <style>
+        :root {
+            --primary: #f472b6;
+            --bg: #1e1b4b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h2 { margin-bottom: 2rem; }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 300px;
+        }
+
+        li {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        li:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(10px);
+            border-color: var(--primary);
+        }
+
+        li.completed {
+            text-decoration: line-through;
+            opacity: 0.5;
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .log {
+            margin-top: 2rem;
+            font-family: monospace;
+            color: #fbbf24;
+            height: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Event Delegation</h2>
+        <p>Click items to toggle (using single parent listener)</p>
+        <ul id="list">
+            <li>Neural Interface</li>
+            <li>Quantum Processor</li>
+            <li>Carbon Fiber Chassis</li>
+            <li>Bio-Metric Scanner</li>
+            <li>Plasma Injector</li>
+        </ul>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        const list = document.getElementById('list');
+        const log = document.getElementById('log');
+
+        list.addEventListener('click', (e) => {
+            // Check if a list item was clicked (Event Delegation)
+            if (e.target.tagName === 'LI') {
+                e.target.classList.toggle('completed');
+                log.innerText = `[EVENT] Bubbled from: ${e.target.innerText}`;
+                
+                // Clear log after delay
+                setTimeout(() => {
+                    if (log.innerText.includes(e.target.innerText)) {
+                        log.innerText = '';
+                    }
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

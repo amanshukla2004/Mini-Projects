@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Forms</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 { margin-top: 0; margin-bottom: 1.5rem; text-align: center; }
+
+        .input-group { margin-bottom: 1.25rem; }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        small { color: #94a3b8; display: block; margin-top: 0.25rem; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Join the Network</h2>
+        <form id="mainForm">
+            <div class="input-group">
+                <input required id="username" type="text" placeholder="Username">
+                <small>Min 3 characters, lowercase</small>
+            </div>
+            <div class="input-group">
+                <input id="email" type="email" placeholder="Email Address">
+            </div>
+            <div class="input-group">
+                <input id="password" type="password" placeholder="Password">
+            </div>
+            <div class="input-group">
+                <select name="gender" id="gender">
+                    <option value="" disabled selected>Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <textarea id="bio" placeholder="Tell us about you..." rows="3"></textarea>
+            </div>
+            <button type="submit">Initialize Account</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('mainForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                gender: document.getElementById('gender').value,
+                bio: document.getElementById('bio').value
+            };
+            console.log('Neural Link Established:', data);
+            alert('Signal Received: Identity Confirmed.');
+        });
+    </script>
+</body>
+</html>

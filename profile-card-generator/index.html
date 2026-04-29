@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber ID Forge</title>
+    <style>
+        :root {
+            --primary: #a855f7;
+            --bg: #050505;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 4rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .form-panel {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h2 { margin-top: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0.5rem;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { filter: brightness(1.2); transform: scale(1.02); }
+
+        .preview-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .card {
+            width: 320px;
+            background: linear-gradient(135deg, #1e1b4b 0%, #000 100%);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid var(--primary);
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+            display: none; /* Hidden until generated */
+        }
+
+        .card.active { display: block; animation: forge 0.5s ease-out; }
+
+        @keyframes forge {
+            from { opacity: 0; transform: rotateY(90deg) scale(0.8); }
+            to { opacity: 1; transform: rotateY(0) scale(1); }
+        }
+
+        .pfp {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            margin: 0 auto 1.5rem auto;
+            object-fit: cover;
+            background: #222;
+        }
+
+        .card h3 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
+        .card h5 { margin: 0.5rem 0; color: var(--primary); text-transform: uppercase; font-size: 0.8rem; }
+        .card p { font-size: 0.9rem; opacity: 0.7; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <div class="layout">
+        <div class="form-panel">
+            <h2>ID Forge</h2>
+            <form id="idForm">
+                <input type="text" id="picUrl" placeholder="Image URL (Unsplash/etc)">
+                <input type="text" id="name" placeholder="Agent Name">
+                <input type="text" id="role" placeholder="Designation">
+                <input type="text" id="bio" placeholder="Neural Description">
+                <button type="submit">Forge Identity</button>
+            </form>
+        </div>
+
+        <div class="preview-panel">
+            <div id="card" class="card">
+                <img id="outPic" class="pfp" src="" alt="">
+                <h3 id="outName">NAME</h3>
+                <h5 id="outRole">ROLE</h5>
+                <p id="outBio">BIO</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('idForm');
+        const card = document.getElementById('card');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            document.getElementById('outPic').src = document.getElementById('picUrl').value || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400';
+            document.getElementById('outName').innerText = document.getElementById('name').value || 'Unknown Agent';
+            document.getElementById('outRole').innerText = document.getElementById('role').value || 'REDACTED';
+            document.getElementById('outBio').innerText = document.getElementById('bio').value || 'Data missing from neural buffer.';
+
+            card.classList.remove('active');
+            void card.offsetWidth; // trigger reflow
+            card.classList.add('active');
+        });
+    </script>
+</body>
+</html>
