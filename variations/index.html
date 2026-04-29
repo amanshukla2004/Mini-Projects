@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINI PROJECTS // STYLE_FORGE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;700&family=Orbitron:wght@400;900&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --primary: #00ff41;
+            --secondary: #00f2fe;
+            --danger: #ff003c;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .variation-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .label {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg);
+            padding: 0 10px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            font-family: 'Fira Code', monospace;
+        }
+
+        h1 { margin: 0; cursor: pointer; transition: 0.3s; }
+
+        /* --- 1. INNOCENT --- */
+        .innocent {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 3rem;
+            letter-spacing: 5px;
+            color: #e0f2fe;
+            text-shadow: 0 0 10px rgba(224, 242, 254, 0.3);
+        }
+
+        /* --- 2. AGGRESSIVE --- */
+        .aggressive {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 3rem;
+            letter-spacing: 10px;
+            color: var(--danger);
+            animation: violent-glitch 0.1s infinite;
+        }
+        @keyframes violent-glitch {
+            0% { transform: translate(0); text-shadow: 4px 0 #fff; }
+            50% { transform: translate(-5px, 5px) skew(20deg); }
+            100% { transform: translate(5px, -5px); text-shadow: -4px 0 #00f2fe; }
+        }
+
+        /* --- 3. GLITCHY (FLICKER) --- */
+        .glitchy {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 12px;
+            color: var(--primary);
+            animation: sudden-flicker 4s infinite;
+        }
+        @keyframes sudden-flicker {
+            0%, 94%, 96%, 100% { transform: translate(0); opacity: 1; }
+            95% { transform: translate(-4px, 4px); opacity: 0.8; text-shadow: 3px 0 var(--danger); }
+            97% { transform: translate(4px, -4px); opacity: 0.9; }
+        }
+
+        /* --- 4. FLASHY (STREAMS) --- */
+        .flashy {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 15px;
+            background: linear-gradient(90deg, var(--danger), var(--secondary), var(--primary));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: flow 2s linear infinite;
+        }
+        @keyframes flow { to { background-position: 200% center; } }
+        .flashy:hover { animation: flow 0.5s linear infinite, strobe 0.1s infinite; }
+        @keyframes strobe { 0% { filter: invert(1); } 100% { filter: invert(0); } }
+
+        /* --- 5. HOLOGRAM --- */
+        .hologram {
+            font-family: 'Fira Code', monospace;
+            font-size: 2.5rem;
+            color: var(--secondary);
+            opacity: 0.7;
+            position: relative;
+        }
+        .hologram::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 242, 254, 0.1) 3px);
+            pointer-events: none;
+        }
+
+        /* --- 6. RETRO CRT --- */
+        .retro {
+            font-family: 'Fira Code', monospace;
+            font-size: 3rem;
+            color: #00ff00;
+            text-transform: uppercase;
+            text-shadow: 2px 2px #003300;
+        }
+        .retro:hover { animation: crt-jitter 0.05s infinite; }
+        @keyframes crt-jitter {
+            0% { transform: translate(1px, 1px); }
+            100% { transform: translate(-1px, -1px); }
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            border: 1px solid var(--primary);
+            padding: 5px 15px;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">< RETURN_TO_HUB</a>
+
+    <div class="variation-container">
+        <span class="label">VAR_01 // INNOCENT</span>
+        <h1 class="innocent">MINI PROJECTS</h1>
+    </div>
+
+    <div class="variation-container">
+        <span class="label">VAR_02 // AGGRESSIVE (CONSTANT)</span>
+        <h1 class="aggressive">MINI PROJECTS</h1>
+    </div>
+
+    <div class="variation-container">
+        <span class="label">VAR_03 // GLITCHY (SUDDEN_FLICKER)</span>
+        <h1 class="glitchy">MINI PROJECTS</h1>
+    </div>
+
+    <div class="variation-container">
+        <span class="label">VAR_04 // FLASHY (STROBE_ON_HOVER)</span>
+        <h1 class="flashy">MINI PROJECTS</h1>
+    </div>
+
+    <div class="variation-container">
+        <span class="label">VAR_05 // HOLOGRAM (RESEARCH_MODE)</span>
+        <h1 class="hologram">MINI PROJECTS</h1>
+    </div>
+
+    <!-- --- 7. NEON PULSE --- -->
+    <style>
+        .neon-pulse {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px var(--secondary), 0 0 30px var(--secondary);
+            animation: pulse-glow 2s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px var(--secondary); }
+            to { text-shadow: 0 0 20px #fff, 0 0 40px var(--secondary), 0 0 60px var(--secondary); }
+        }
+    </style>
+    <div class="variation-container">
+        <span class="label">VAR_07 // NEON_PULSE (VIBE)</span>
+        <h1 class="neon-pulse">MINI PROJECTS</h1>
+    </div>
+
+    <!-- --- 8. CYBERPUNK EDGE --- -->
+    <style>
+        .cyberpunk {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            background: #fdf001;
+            color: #000;
+            padding: 10px 40px;
+            clip-path: polygon(0 0, 95% 0, 100% 30%, 100% 100%, 5% 100%, 0 70%);
+            border: 4px solid #000;
+            font-weight: 900;
+        }
+        .cyberpunk:hover {
+            background: #000;
+            color: #fdf001;
+            transform: skew(-5deg);
+        }
+    </style>
+    <div class="variation-container">
+        <span class="label">VAR_08 // CYBERPUNK_EDGE (BOLD)</span>
+        <h1 class="cyberpunk">MINI PROJECTS</h1>
+    </div>
+
+    <!-- --- 9. DIGITAL RAIN --- -->
+    <style>
+        .digital-rain {
+            font-family: 'Fira Code', monospace;
+            font-size: 3rem;
+            color: var(--primary);
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            padding: 0 20px;
+        }
+        .digital-rain::before {
+            content: "1010101101010101";
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            font-size: 0.8rem;
+            opacity: 0.2;
+            animation: rain 1s linear infinite;
+        }
+        @keyframes rain { to { top: 100%; } }
+    </style>
+    <div class="variation-container">
+        <span class="label">VAR_09 // DIGITAL_RAIN (MATRIX)</span>
+        <h1 class="digital-rain">MINI PROJECTS</h1>
+    </div>
+
+    <p style="opacity: 0.3; font-size: 0.7rem; font-family: 'Fira Code'; margin-top: 5rem;">SYSTEM_VARIATION_FORGE // V3.0 // END_TRANSMISSION</p>
+</body>
+</html>
+

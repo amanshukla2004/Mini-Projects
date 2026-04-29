@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body style="cursor: none;">
+    <div class="cursor-follower" id="cursor"></div>
 
     <div id="boot-screen">
         <p class="typewriter">> INITIALIZING BOOT_SEQUENCE...</p>
@@ -21,14 +22,21 @@
     </div>
 
     <div class="scanline"></div>
-
+    
     <div class="terminal">
         <header class="header">
-            <h1>Mini Projects</h1>
+            <h1 data-text="MINI PROJECTS">MINI PROJECTS</h1>
             <div class="status-bar">
-                <span>USER: AMAN SHUKLA</span>
-                <span id="clock">SYSTEM_TIME: --:--:--</span>
-                <span>STATUS: OPERATIONAL</span>
+                <div class="status-item">
+                    <div class="dot"></div>
+                    <span>USER: AMAN SHUKLA</span>
+                </div>
+                <div class="status-item">
+                    <span id="clock">SYSTEM_TIME: --:--:--</span>
+                </div>
+                <div class="status-item">
+                    <span>STATUS: OPERATIONAL</span>
+                </div>
             </div>
         </header>
 
@@ -36,11 +44,19 @@
             <!-- Projects injected via script.js -->
         </div>
 
-        <footer
-            style="margin-top: auto; padding: 1rem; border-top: 1px solid rgba(0, 255, 65, 0.2); font-size: 0.7rem; display: flex; justify-content: space-between;">
-            <span>TOTAL_PROJECTS: 18</span>
-            <span>BUILD: 2026.04.29</span>
-            <span>ENCRYPTION: AES-256</span>
+        <footer>
+            <div style="display: flex; gap: 20px;">
+                <span>TOTAL_PROJECTS: 18</span>
+                <span>BUILD: 2026.04.30</span>
+                <a href="variations/index.html" style="color: var(--safe); text-decoration: none; border-bottom: 1px solid var(--safe);">[VIEW_VARIATIONS]</a>
+            </div>
+            <div id="visualizer" style="display: flex; align-items: flex-end; gap: 2px; height: 10px;">
+                <div style="width: 2px; height: 40%; background: var(--safe); animation: barPulse 0.4s infinite alternate;"></div>
+                <div style="width: 2px; height: 80%; background: var(--safe); animation: barPulse 0.6s infinite alternate;"></div>
+                <div style="width: 2px; height: 30%; background: var(--safe); animation: barPulse 0.3s infinite alternate;"></div>
+                <div style="width: 2px; height: 60%; background: var(--safe); animation: barPulse 0.5s infinite alternate;"></div>
+            </div>
+            <span>ENCRYPTION: AES-256 // RSA-4096</span>
         </footer>
     </div>
 

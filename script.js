@@ -1,3 +1,50 @@
+// Custom Cursor Logic
+const cursor = document.getElementById('cursor');
+window.addEventListener('mousemove', (e) => {
+    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+});
+
+document.addEventListener('mouseover', (e) => {
+    if (e.target.closest('.project-card') || e.target.closest('.launch-btn') || e.target.closest('h1')) {
+        cursor.classList.add('active');
+    } else {
+        cursor.classList.remove('active');
+    }
+});
+
+// Header Scramble Effect
+const headerTitle = document.querySelector('.header h1');
+const originalText = headerTitle.innerText;
+const chars = "!<>-_\\/[]{}—=+*^?#________";
+
+headerTitle.addEventListener('mouseover', () => {
+    let iteration = 0;
+    const interval = setInterval(() => {
+        headerTitle.innerText = originalText.split("")
+            .map((letter, index) => {
+                if(index < iteration) return originalText[index];
+                return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join("");
+        
+        if(iteration >= originalText.length) clearInterval(interval);
+        iteration += 1 / 3;
+    }, 30);
+});
+
+headerTitle.addEventListener('mouseleave', () => {
+    headerTitle.innerText = originalText;
+});
+
+// Clock logic
+setInterval(() => {
+    const now = new Date();
+    const clockEl = document.getElementById('clock');
+    if(clockEl) clockEl.innerText = `SYSTEM_TIME: ${now.toLocaleTimeString()}`;
+}, 1000);
+
+
+// Projects injection
 const projects = [
     { id: "01", name: "Dynamic Forms", path: "forms/index.html", tags: ["HTML", "Forms"], complexity: "Basic" },
     { id: "02", name: "Event Bubbling", path: "event-bubbling/index.html", tags: ["JS", "Events"], complexity: "Basic" },
@@ -20,9 +67,8 @@ const projects = [
 ];
 
 const grid = document.getElementById('project-grid');
-
-function createProjectCard(proj) {
-    return `
+if(grid) {
+    grid.innerHTML = projects.map(proj => `
         <div class="project-card">
             <span class="id">UID: ${proj.id} | ${proj.complexity}</span>
             <h3>${proj.name}</h3>
@@ -31,28 +77,27 @@ function createProjectCard(proj) {
             </div>
             <a href="${proj.path}" class="launch-btn" target="_blank">> RUN_SCRIPT</a>
         </div>
-    `;
+    `).join('');
 }
 
-// Initialize grid
-grid.innerHTML = projects.map(proj => createProjectCard(proj)).join('');
-
-// Clock
+// Global Spasm Logic
 setInterval(() => {
-    const now = new Date();
-    document.getElementById('clock').innerText = `SYSTEM_TIME: ${now.toLocaleTimeString()}`;
+    if (Math.random() > 0.96) {
+        document.body.classList.add('glitch-active');
+        setTimeout(() => {
+            document.body.classList.remove('glitch-active');
+        }, 150);
+    }
 }, 1000);
 
-// Boot screen logic
+// Boot screen
 const bootScreen = document.getElementById('boot-screen');
-const lines = document.querySelectorAll('.typewriter');
-
-lines.forEach((line, index) => {
-    line.style.animationDelay = `${index * 0.4}s`;
-});
-
+const bootLines = document.querySelectorAll('.typewriter');
+bootLines.forEach((line, i) => line.style.animationDelay = `${i * 0.4}s`);
 setTimeout(() => {
-    bootScreen.style.opacity = '0';
-    bootScreen.style.transition = 'opacity 0.5s ease';
-    setTimeout(() => bootScreen.classList.add('hidden'), 500);
-}, (lines.length * 400) + 1000);
+    if(bootScreen) {
+        bootScreen.style.opacity = '0';
+        bootScreen.style.transition = 'opacity 0.5s';
+        setTimeout(() => bootScreen.classList.add('hidden'), 500);
+    }
+}, (bootLines.length * 400) + 1000);
