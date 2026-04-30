@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Straw Hat Pirates // Grand Line Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Special+Elite&family=Pirata+One&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="ocean-overlay"></div>
+    <div class="vignette"></div>
+
+    <header class="main-header">
+        <h1 class="logo-title">STRAW HAT PIRATES</h1>
+        <p class="tagline">The Most Dangerous Crew in the New World</p>
+    </header>
+
+    <main class="gallery-wrapper">
+        <div class="gallery-container" id="gallery">
+            <!-- Cards injected via JS -->
+        </div>
+    </main>
+
+    <!-- Modal for Detailed Bio -->
+    <div id="bio-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeBio()"></div>
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeBio()">&times;</button>
+            <div class="modal-body">
+                <div class="modal-left">
+                    <img id="modal-img" src="" alt="">
+                    <div class="bounty-stamp">WANTED</div>
+                </div>
+                <div class="modal-right">
+                    <h2 id="modal-name"></h2>
+                    <h3 id="modal-role"></h3>
+                    <p id="modal-quote"></p>
+                    <div class="bounty-wrapper">
+                        <span class="currency">฿</span>
+                        <span id="modal-bounty"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

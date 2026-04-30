@@ -35,7 +35,7 @@ body::before {
     opacity: 0.4;
 }
 
-body.glitch-active { animation: screen-shake 0.15s infinite; }
+body.glitch-active { animation: screen-shake 0.01s infinite; }
 @keyframes screen-shake {
     0% { transform: translate(0,0); }
     50% { transform: translate(3px, -3px); filter: hue-rotate(90deg); }
@@ -45,7 +45,7 @@ body.glitch-active { animation: screen-shake 0.15s infinite; }
 /* --- CUSTOM CURSOR --- */
 .cursor-follower {
     position: fixed;
-    width: 20px; height: 20px;
+    width: 10px; height: 10px;
     border: 2px solid var(--safe);
     border-radius: 50%;
     pointer-events: none;
@@ -54,11 +54,13 @@ body.glitch-active { animation: screen-shake 0.15s infinite; }
     transform: translate3d(-50%, -50%, 0);
 }
 .cursor-follower.active {
-    width: 45px; height: 45px;
+    width: 15px; height: 15px;
     border-color: var(--danger);
     background: rgba(255, 0, 60, 0.1);
     box-shadow: 0 0 20px var(--danger-glow);
+    
 }
+
 
 /* --- TERMINAL SHELL --- */
 .terminal {

@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    height: 100vh;
+    width: 100vw;
+    background-color: aqua;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    position: relative;
+}
+
+.base {
+    background-color: red;
+    box-shadow: 5px 5px 10px;
+    width: 200px;
+    height: 75px;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    color: white;
+    z-index: 2;
+    position: relative;
+    font-size: 1.5rem;
+}
+
+.float {
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    background-color: black;
+    transition: width 0.5s ease-in-out 0.3s;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+.base:hover .float {
+    width: 100%;
+}

@@ -46,24 +46,30 @@ setInterval(() => {
 
 // Projects injection
 const projects = [
-    { id: "01", name: "Dynamic Forms", path: "forms/index.html", tags: ["HTML", "Forms"], complexity: "Basic" },
-    { id: "02", name: "Event Bubbling", path: "event-bubbling/index.html", tags: ["JS", "Events"], complexity: "Basic" },
-    { id: "03", name: "Bubbling & Capturing", path: "bubbling-capturing/index.html", tags: ["JS", "Theory"], complexity: "Basic" },
-    { id: "04", name: "Keyboard Events", path: "keyboard-events/index.html", tags: ["JS", "Input"], complexity: "Simple" },
-    { id: "05", name: "Live Char Count", path: "live-character-count/index.html", tags: ["Logic", "Strings"], complexity: "Simple" },
-    { id: "06", name: "Mouse Visualizer", path: "mouse-events-visualizer/index.html", tags: ["Events", "DOM"], complexity: "Simple" },
-    { id: "07", name: "Upload Animation", path: "upload-button-animation/index.html", tags: ["CSS", "Transition"], complexity: "Simple" },
-    { id: "08", name: "Download Progress", path: "download-progress-bar/index.html", tags: ["Logic", "UI"], complexity: "Moderate" },
-    { id: "09", name: "Focus Timer", path: "Timer/index.html", tags: ["Intervals", "State"], complexity: "Moderate" },
-    { id: "10", name: "Form Validator", path: "form-validator/index.html", tags: ["Regex", "Logic"], complexity: "Moderate" },
-    { id: "11", name: "Profile Card Gen", path: "profile-card-generator/index.html", tags: ["DOM", "Inputs"], complexity: "Moderate" },
-    { id: "12", name: "Theme Switcher", path: "theme-change/index.html", tags: ["Storage", "UX"], complexity: "Moderate" },
-    { id: "13", name: "Interactive Particles", path: "interactive-particles/index.html", tags: ["Animation", "Visuals"], complexity: "Advanced" },
-    { id: "14", name: "Particle Swarm Web", path: "particle-swarm-web/index.html", tags: ["Canvas", "Math"], complexity: "Advanced" },
-    { id: "15", name: "Physics Swarm", path: "physics-particle-swarm/index.html", tags: ["Physics", "Canvas"], complexity: "Advanced" },
-    { id: "16", name: "Neon Network Explore", path: "neon-network-explore/index.html", tags: ["Canvas", "UX"], complexity: "Expert" },
-    { id: "17", name: "Quantum Particle HUD", path: "quantum-particle-hud/index.html", tags: ["HUD", "Complex Math"], complexity: "Expert" },
-    { id: "18", name: "3D Flux Dashboard", path: "3d-flux-dashboard/index.html", tags: ["Three.js", "WebGL"], complexity: "Expert" }
+    { id: "01", name: "Counter Button", path: "01-counter-button/index.html", tags: ["HTML", "JS", "Basics"], complexity: "Basic" },
+    { id: "02", name: "Live Char Count", path: "02-live-char-count/index.html", tags: ["Logic", "Strings"], complexity: "Basic" },
+    { id: "03", name: "Theme Switcher", path: "03-theme-switcher/index.html", tags: ["Storage", "UX"], complexity: "Basic" },
+    { id: "04", name: "Dynamic Forms", path: "04-dynamic-forms/index.html", tags: ["HTML", "Forms"], complexity: "Basic" },
+    { id: "05", name: "Hire Me Button", path: "05-hire-me-button/index.html", tags: ["CSS", "Interactivity"], complexity: "Basic" },
+    { id: "06", name: "Keyboard Events", path: "06-keyboard-events/index.html", tags: ["JS", "Input"], complexity: "Simple" },
+    { id: "07", name: "Mouse Visualizer", path: "07-mouse-visualizer/index.html", tags: ["Events", "DOM"], complexity: "Simple" },
+    { id: "08", name: "Event Bubbling", path: "08-event-bubbling/index.html", tags: ["JS", "Events"], complexity: "Simple" },
+    { id: "09", name: "Bubbling & Capturing", path: "09-bubbling-capturing/index.html", tags: ["JS", "Theory"], complexity: "Simple" },
+    { id: "10", name: "Upload Animation", path: "10-upload-animation/index.html", tags: ["CSS", "Transition"], complexity: "Simple" },
+    { id: "11", name: "Download Progress", path: "11-download-progress/index.html", tags: ["Logic", "UI"], complexity: "Moderate" },
+    { id: "12", name: "Focus Timer", path: "12-focus-timer/index.html", tags: ["Intervals", "State"], complexity: "Moderate" },
+    { id: "13", name: "Form Validator", path: "13-form-validator/index.html", tags: ["Regex", "Logic"], complexity: "Moderate" },
+    { id: "14", name: "Profile Card Gen", path: "14-profile-card-gen/index.html", tags: ["DOM", "Inputs"], complexity: "Moderate" },
+    { id: "15", name: "Image Gallery", path: "15-image-gallery/index.html", tags: ["Layout", "CSS"], complexity: "Moderate" },
+    { id: "16", name: "Parallax V1", path: "16-parallax-v1/index.html", tags: ["CSS", "Effect"], complexity: "Moderate" },
+    { id: "17", name: "Parallax V2", path: "17-parallax-v2/index.html", tags: ["Scrolling", "Visuals"], complexity: "Advanced" },
+    { id: "18", name: "Portfolio V1", path: "18-portfolio-v1/index.html", tags: ["Web Design", "Layout"], complexity: "Advanced" },
+    { id: "19", name: "Interactive Particles", path: "19-interactive-particles/index.html", tags: ["Animation", "Visuals"], complexity: "Advanced" },
+    { id: "20", name: "Particle Swarm Web", path: "20-particle-swarm-web/index.html", tags: ["Canvas", "Math"], complexity: "Advanced" },
+    { id: "21", name: "Physics Swarm", path: "21-physics-swarm/index.html", tags: ["Physics", "Canvas"], complexity: "Advanced" },
+    { id: "22", name: "Neon Network", path: "22-neon-network/index.html", tags: ["Canvas", "UX"], complexity: "Expert" },
+    { id: "23", name: "Quantum Particle HUD", path: "23-quantum-particle-hud/index.html", tags: ["HUD", "Complex Math"], complexity: "Expert" },
+    { id: "24", name: "3D Flux Dashboard", path: "24-3d-flux-dashboard/index.html", tags: ["Three.js", "WebGL"], complexity: "Expert" }
 ];
 
 const grid = document.getElementById('project-grid');
